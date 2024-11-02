@@ -1,6 +1,6 @@
 # Sistema de Gerenciamento de Times e Partidas de Futebol
 
-Este projeto em C é um sistema que gerencia times de futebol, jogadores, partidas, e estatísticas. Com ele, é possível cadastrar e excluir times e jogadores, registrar partidas e eventos, gerar relatórios de classificação, artilharia e estatísticas detalhadas de cada time.
+Este projeto em C feito para a disciplina de Laboratorio de Programação II é um sistema que gerencia times de futebol, jogadores, partidas, e estatísticas. Com ele, é possível cadastrar e excluir times e jogadores, registrar partidas e eventos, gerar relatórios de classificação, artilharia e estatísticas detalhadas de cada time.
 
 ## Funcionalidades
 
@@ -124,7 +124,8 @@ Ao executar o programa, você verá um menu com opções numeradas:
 Escolha: 
 
 Selecione a opção desejada digitando o número correspondente e siga as instruções na tela.
-Observações Importantes
+
+## Observações Importantes
 
 - A função adicionarEvento() deve ser usada com cautela para evitar que eventos inválidos sejam adicionados.
 - atualizarClassificacao() deve ser chamada apenas uma vez por partida para evitar atualizações duplicadas.
@@ -133,3 +134,7 @@ Observações Importantes
 Este projeto é distribuído sob a licença MIT.
 
 Autor: Pedro Henrique Abreu
+
+
+### Refêrencias:
+- Materiais do professor Eduardo Kesssler Piveta, disponivel em: https://sites.google.com/a/inf.ufsm.br/ed/
