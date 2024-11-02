@@ -23,3 +23,8 @@ O sistema utiliza as seguintes estruturas de dados:
 - `Partida`: Representa uma partida entre dois times, contendo informações sobre os times, gols e eventos.
 - `Rodada`: Agrupa partidas em uma rodada específica.
 
+## Instruções para que o código funcione corretamente:
+
+- A função para atualizar a classificação só deve ser utilizada após cadastrar todos os gols e eventos desejados e não deve ser chamada mais de uma vez para a mesma partida.
+- Ao adicionar os times pela primeira vez, o indice dos mesmos serão indicados pela ordem em que foram adicionados, após usar a função de atualizar a classificação, o indice dos times ficará organizado pelo número de pontos, ou seja, será definido pela posição do time na tabela.
+
