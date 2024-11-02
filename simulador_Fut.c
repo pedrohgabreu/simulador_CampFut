@@ -8,6 +8,7 @@
 #define MAX_EVENTOS 50
 #define MAX_RODADAS 38
 
+// estrutura para guardar os dados dos jogadores
 typedef struct {
     char nome[50];
     char posicao[3];
@@ -18,6 +19,7 @@ typedef struct {
     int cartoesVermelhos;
 } Jogador;
 
+// estrutura para guardar os dados dos times
 typedef struct {
     char nome[50];
     char estado[3];
@@ -31,11 +33,13 @@ typedef struct {
     int faltas;
 } Time;
 
+// estrutura para gerenciar os eventos
 typedef struct {
     int minuto;
     char descricao[100];
 } Evento;
 
+// estrutura para gerenciar as partidas
 typedef struct {
     Time *time1;
     Time *time2;
@@ -45,6 +49,7 @@ typedef struct {
     int totalEventos;
 } Partida;
 
+// estrutura para gerenciar as rodadas
 typedef struct {
     Partida partidas[MAX_PARTIDAS];
     int totalPartidas;
@@ -55,11 +60,12 @@ int totalTimes = 0;
 Rodada rodadas[MAX_RODADAS];
 int totalRodadas = 0;
 
+// função para o cadastro de times
 void cadastrarTime() {                 //funcionando
     if (totalTimes >= MAX_TIMES) return;
     printf("Nome do time: ");
     scanf(" %[^\n]%*c", times[totalTimes].nome);
-    printf("Estado do time: ");
+    printf("Estado do time (RJ, SP, RS, ...): ");
     scanf(" %[^\n]%*c", times[totalTimes].estado);
     times[totalTimes].totalJogadores = times[totalTimes].pontos = 0;
     times[totalTimes].golsFeitos = times[totalTimes].golsSofridos = 0;
@@ -67,6 +73,8 @@ void cadastrarTime() {                 //funcionando
     totalTimes++;
 }
 
+
+// função para a exclusão de times
 void excluirTime() {                //funcionando
     int index;
     printf("Indice do time a excluir: ");
@@ -76,6 +84,7 @@ void excluirTime() {                //funcionando
     totalTimes--;
 }
 
+// função para o cadastro de jogadores
 void cadastrarJogador() {             //funcionando
     int timeIndex;
     if (totalTimes == 0) return;
@@ -94,6 +103,7 @@ void cadastrarJogador() {             //funcionando
     j->gols = j->cartoesAmarelos = j->cartoesVermelhos = 0;
 }
 
+// função para a exclusão de jogadores
 void excluirJogador() {             //funcionando
     int timeIndex, jogadorIndex;
     printf("Indice do time: ");
@@ -101,12 +111,13 @@ void excluirJogador() {             //funcionando
     printf("Indice do jogador: ");
     scanf("%d", &jogadorIndex);
     if (timeIndex < 0 || timeIndex >= totalTimes || jogadorIndex < 0 || jogadorIndex >= times[timeIndex].totalJogadores) return;
-    for (int i = jogadorIndex; i < times[timeIndex].totalJogadores - 1; i++) 
+    for (int i = jogadorIndex; i < times[timeIndex].totalJogadores - 1; i++)
         times[timeIndex].jogadores[i] = times[timeIndex].jogadores[i + 1];
     times[timeIndex].totalJogadores--;
 }
 
-void cadastrarRodada() {                //funcionando parcialmente
+// função para o cadastro de rodadas e partidas
+void cadastrarRodada() {                //funcionando
     if (totalRodadas >= MAX_RODADAS) return;
     Rodada *novaRodada = &rodadas[totalRodadas++];
     printf("Numero de partidas: ");
@@ -125,36 +136,38 @@ void cadastrarRodada() {                //funcionando parcialmente
     }
 }
 
+// função para adicionar e gerenciar eventos
 void adicionarEvento(Partida *partida) {       // n funciona
     if (partida->totalEventos >= MAX_EVENTOS) return;
     Evento *evento = &partida->eventos[partida->totalEventos++];
     printf("Minuto do evento: ");
     scanf("%d", &evento->minuto);
     printf("Descricao: ");
-    scanf(" %[^\n]%*c", evento->descricao);
+    scanf("[^\n]%*c", evento->descricao);
 }
 
+// função para registrar e atribuir gols aos jogadores
 void registrarGol(Partida *partida) {    //funcionando
     int jogadorIndex;
     Jogador *jogador;
     printf("Escolha o jogador que marcou o gol:\n");
 
-    // Listar jogadores do time 1
+    // listar jogadores do time 1
     printf("Jogadores do time 1:\n");
     for (int i = 0; i < partida->time1->totalJogadores; i++) {
         printf("%d. %s\n", i, partida->time1->jogadores[i].nome);
     }
 
-    // Listar jogadores do time 2
+    // listar jogadores do time 2
     printf("Jogadores do time 2:\n");
     for (int i = 0; i < partida->time2->totalJogadores; i++) {
         printf("%d. %s\n", i + partida->time1->totalJogadores, partida->time2->jogadores[i].nome);
     }
 
-    // Escolher jogador
+    // escolher jogador
     scanf("%d", &jogadorIndex);
 
-    // Verificar se o jogador pertence ao time 1 ou time 2
+    // verificar se o jogador pertence ao time 1 ou time 2
     if (jogadorIndex < partida->time1->totalJogadores) {
         jogador = &partida->time1->jogadores[jogadorIndex];
         partida->golsTime1++;
@@ -164,40 +177,75 @@ void registrarGol(Partida *partida) {    //funcionando
         partida->golsTime2++;
     }
 
-    // Atualizar gols do jogador
+    // atualizar gols do jogador
     jogador->gols++;
-    printf("Gol registrado para %s do time %s\n", jogador->nome, jogadorIndex < partida->time1->totalJogadores ? partida->time1->nome : partida->time2->nome);
 }
 
-void atualizarClassificacao(Partida *partida) {        //funcionando parcialmente
-    if (partida->golsTime1 > partida->golsTime2) partida->time1->pontos += 3;
-    else if (partida->golsTime1 < partida->golsTime2) partida->time2->pontos += 3;
-    else {
+
+// função para atualizar a classificação dos times na tabela
+void atualizarClassificacao(Partida *partida) {            // funcionando, só deve ser chamada após cadastrar todos os gols e eventos na partida, não deve ser chamada mais de uma vez na mesma partida.
+    if (partida->golsTime1 > partida->golsTime2) {
+        partida->time1->pontos += 3;
+    } else if (partida->golsTime1 < partida->golsTime2) {
+        partida->time2->pontos += 3;
+    } else {
         partida->time1->pontos++;
         partida->time2->pontos++;
     }
 }
 
-void relatorioClassificacao() {            //funcionando 
+
+// função para gerar a tabela com a classificação dos times
+void relatorioClassificacao() {
+    // ordenação dos times pelo número de pontos usando bubble // funcionando
+    for (int i = 0; i < totalTimes - 1; i++) {
+        for (int j = 0; j < totalTimes - i - 1; j++) {
+            if (times[j].pontos < times[j + 1].pontos) {
+                Time temp = times[j];
+                times[j] = times[j + 1];
+                times[j + 1] = temp;
+            }
+        }
+    }
+
     printf("\n--- Classificacao Geral ---\n");
     for (int i = 0; i < totalTimes; i++) {
         printf("Time: %s, Pontos: %d\n", times[i].nome, times[i].pontos);
     }
 }
 
-void relatorioArtilharia() {              //funcionando
-    printf("\n--- Artilharia ---\n");
+
+// função para exibir a lista de artilheiros
+void relatorioArtilharia() {      // funcionando
+    Jogador artilheiros[MAX_TIMES * 11];
+    int totalArtilheiros = 0;
+
     for (int i = 0; i < totalTimes; i++) {
         for (int j = 0; j < times[i].totalJogadores; j++) {
-            Jogador jogador = times[i].jogadores[j];
-            if (jogador.gols > 0) {
-                printf("Jogador: %s, Gols: %d\n", jogador.nome, jogador.gols);
+            if (times[i].jogadores[j].gols > 0) {
+                artilheiros[totalArtilheiros++] = times[i].jogadores[j];
             }
         }
     }
+
+    // ordenação dos jogadores pelo número de gols usando bubble
+    for (int i = 0; i < totalArtilheiros - 1; i++) {
+        for (int j = 0; j < totalArtilheiros - i - 1; j++) {
+            if (artilheiros[j].gols < artilheiros[j + 1].gols) {
+                Jogador temp = artilheiros[j];
+                artilheiros[j] = artilheiros[j + 1];
+                artilheiros[j + 1] = temp;
+            }
+        }
+    }
+
+    printf("\n--- Artilharia ---\n");
+    for (int i = 0; i < totalArtilheiros; i++) {
+        printf("Jogador: %s, Gols: %d\n", artilheiros[i].nome, artilheiros[i].gols);
+    }
 }
 
-void relatorioEstatisticas() {     //n ta funcionando
+void relatorioEstatisticas() {     // n funciona
     printf("\n--- Estatisticas por Time ---\n");
     for (int i = 0; i < totalTimes; i++) {
         Time *time = &times[i];
@@ -235,7 +283,20 @@ int main() {
                     registrarGol(&rodadas[rodadaIndex].partidas[partidaIndex]);
                 }
                 break;
-            case 8: if (totalRodadas > 0) atualizarClassificacao(&rodadas[totalRodadas - 1].partidas[0]); break;
+            case 8:
+                if (totalRodadas > 0) {
+                    int rodadaIndex, partidaIndex;
+                    printf("Selecione a rodada (0 a %d): ", totalRodadas - 1);
+                    scanf("%d", &rodadaIndex);
+                    if (rodadaIndex < 0 || rodadaIndex >= totalRodadas) break;
+
+                    printf("Selecione a partida (0 a %d): ", rodadas[rodadaIndex].totalPartidas - 1);
+                    scanf("%d", &partidaIndex);
+                    if (partidaIndex < 0 || partidaIndex >= rodadas[rodadaIndex].totalPartidas) break;
+
+                    atualizarClassificacao(&rodadas[rodadaIndex].partidas[partidaIndex]);
+                }
+                break;
             case 9: relatorioClassificacao(); break;
             case 10: relatorioArtilharia(); break;
             case 11: relatorioEstatisticas(); break;
