@@ -137,13 +137,60 @@ void cadastrarRodada() {                //funcionando
 }
 
 // função para adicionar e gerenciar eventos
-void adicionarEvento(Partida *partida) {       // n funciona
-    if (partida->totalEventos >= MAX_EVENTOS) return;
+void adicionarEvento(Rodada *rodada) {
+    int partidaIndex, opcaoevento, timeIndex;
+    
+    printf("Selecione a partida: ");
+    scanf("%d", &partidaIndex);
+    
+    if (partidaIndex < 0 || partidaIndex >= rodada->totalPartidas) {
+        printf("Índice de partida inválido.\n");
+        return;
+    }
+    
+    Partida *partida = &rodada->partidas[partidaIndex];
+    
+    if (partida->totalEventos >= MAX_EVENTOS) {
+        printf("Número máximo de eventos atingido.\n");
+        return;
+    }
+    
     Evento *evento = &partida->eventos[partida->totalEventos++];
     printf("Minuto do evento: ");
     scanf("%d", &evento->minuto);
-    printf("Descricao: ");
-    scanf("[^\n]%*c", evento->descricao);
+
+    printf("Selecione o time (1 para Time 1, 2 para Time 2): ");
+    scanf("%d", &timeIndex);
+    Time *time;
+    if (timeIndex == 1) {
+        time = partida->time1;
+    } else if (timeIndex == 2) {
+        time = partida->time2;
+    } else {
+        printf("Índice de time inválido.\n");
+        partida->totalEventos--; // Reverter a adição do evento
+        return;
+    }
+
+    printf("1. Cartao Amarelo\n2. Cartao Vermelho\n3. Falta\nEscolha: ");
+    scanf("%d", &opcaoevento);
+    switch (opcaoevento)
+    {
+    case 1:
+        time->cartoesAmarelos++;
+        break;
+    case 2:
+        time->cartoesVermelhos++;
+        break;
+    case 3:
+        time->faltas++;
+        break;    
+    
+    default:
+        printf("Opção inválida.\n");
+        partida->totalEventos--; // Reverter a adição do evento
+        break;
+    }
 }
 
 // função para registrar e atribuir gols aos jogadores
@@ -171,10 +218,14 @@ void registrarGol(Partida *partida) {    //funcionando
     if (jogadorIndex < partida->time1->totalJogadores) {
         jogador = &partida->time1->jogadores[jogadorIndex];
         partida->golsTime1++;
+        partida->time1->golsFeitos++;
+        partida->time2->golsSofridos++;
     } else {
         jogadorIndex -= partida->time1->totalJogadores;
         jogador = &partida->time2->jogadores[jogadorIndex];
         partida->golsTime2++;
+        partida->time2->golsFeitos++;
+        partida->time1->golsSofridos++;
     }
 
     // atualizar gols do jogador
@@ -268,7 +319,7 @@ int main() {
             case 3: cadastrarJogador(); break;
             case 4: excluirJogador(); break;
             case 5: cadastrarRodada(); break;
-            case 6: if (totalRodadas > 0) adicionarEvento(&rodadas[totalRodadas - 1].partidas[0]); break;
+            case 6: if (totalRodadas > 0) adicionarEvento(&rodadas[totalRodadas - 1]); break;
             case 7:
                 if (totalRodadas > 0) {
                     int rodadaIndex, partidaIndex;
