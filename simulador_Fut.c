@@ -168,7 +168,7 @@ void adicionarEvento(Rodada *rodada) {
         time = partida->time2;
     } else {
         printf("Índice de time inválido.\n");
-        partida->totalEventos--; // Reverter a adição do evento
+        partida->totalEventos--; // reverter a adição do evento
         return;
     }
 
@@ -188,7 +188,7 @@ void adicionarEvento(Rodada *rodada) {
     
     default:
         printf("Opção inválida.\n");
-        partida->totalEventos--; // Reverter a adição do evento
+        partida->totalEventos--; // reverter a adição do evento
         break;
     }
 }
