@@ -131,8 +131,6 @@ Selecione a opção desejada digitando o número correspondente e siga as instru
 - atualizarClassificacao() deve ser chamada apenas uma vez por partida para evitar atualizações duplicadas.
 - A função relatorioEstatisticas() exibe as estatísticas detalhadas de cada time.
 
-Este projeto é distribuído sob a licença MIT.
-
 Autor: Pedro Henrique Abreu
 
 
