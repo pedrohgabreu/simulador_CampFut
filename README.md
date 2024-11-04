@@ -97,13 +97,13 @@ Compilação:
 
 Para compilar o código, use o gcc:
 
-`gcc -o sistema_futebol sistema_futebol.c`
+`gcc -o simulador_Fut simulador_Fut.c`
 
 Execução
 
 Para executar o programa, digite:
 
-`./sistema_futebol`
+`./simulador_Fut`
 
 ## Instruções de Uso
 
